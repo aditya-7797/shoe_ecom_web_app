@@ -31,7 +31,15 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+Ensure the plan satisfies the Ecom WebApp Constitution:
+- Code Quality: Lint/format pass; type-check clean; architectural boundaries
+  documented; complexity justifications added if exceeding guardrails.
+- Testing: Defined unit, contract, and integration tests; coverage targets
+  (overall ≥ 85%, critical flows ≥ 95%); CI gating plan included.
+- UX Consistency & A11y: Uses shared design system; responsive breakpoints
+  listed; WCAG 2.2 AA checks defined (keyboard, focus, semantics, contrast).
+- Performance: Page-level budgets (LCP p75 ≤ 2.5s, TTI p95 ≤ 3.0s);
+  API p95 latency targets; caching/CDN strategy; observability metrics.
 
 ## Project Structure
 

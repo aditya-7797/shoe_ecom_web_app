@@ -107,6 +107,9 @@
   These must be technology-agnostic and measurable.
 -->
 
+> Include performance (e.g., LCP p75, TTI p95) and accessibility (WCAG 2.2 AA)
+> metrics where relevant to ensure alignment with the constitution.
+
 ### Measurable Outcomes
 
 - **SC-001**: [Measurable metric, e.g., "Users can complete account creation in under 2 minutes"]

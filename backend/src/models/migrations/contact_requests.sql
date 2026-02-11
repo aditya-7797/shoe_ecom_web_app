@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS contact_requests (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255),
+  email VARCHAR(255),
+  message TEXT,
+  status ENUM('new','reviewed','archived') DEFAULT 'new',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;

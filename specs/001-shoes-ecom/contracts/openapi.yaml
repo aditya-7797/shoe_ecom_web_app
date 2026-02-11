@@ -1,0 +1,258 @@
+openapi: 3.0.3
+info:
+  title: Shoes E‑Commerce API
+  version: 0.1.0
+servers:
+  - url: http://localhost:4000/api
+paths:
+  /auth/signup:
+    post:
+      summary: User signup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name: { type: string }
+                email: { type: string, format: email }
+                password: { type: string, format: password }
+      responses:
+        '201': { description: Created }
+  /auth/login:
+    post:
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string, format: password }
+      responses:
+        '200': { description: OK }
+  /products:
+    get:
+      summary: List products
+      parameters:
+        - in: query
+          name: page
+          schema: { type: integer, minimum: 1 }
+        - in: query
+          name: pageSize
+          schema: { type: integer, minimum: 1, maximum: 100 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+  /products/{id}:
+    get:
+      summary: Get product by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDetail'
+  /products/{id}/reviews:
+    get:
+      summary: List reviews for product
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Review' }
+  /cart:
+    get:
+      summary: Get current cart
+      responses:
+        '200': { description: OK }
+    post:
+      summary: Add item to cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [productId, quantity]
+              properties:
+                productId: { type: integer }
+                quantity: { type: integer, minimum: 1 }
+      responses:
+        '200': { description: OK }
+  /cart/item/{id}:
+    patch:
+      summary: Update cart item quantity
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [quantity]
+              properties:
+                quantity: { type: integer, minimum: 1 }
+      responses:
+        '200': { description: OK }
+    delete:
+      summary: Remove cart item
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '204': { description: No Content }
+  /checkout:
+    post:
+      summary: Confirm checkout (no payment)
+      responses:
+        '200': { description: OK }
+  /admin/products:
+    post:
+      summary: Admin add product
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductCreate'
+      responses:
+        '201': { description: Created }
+  /admin/products/{id}:
+    patch:
+      summary: Admin edit product
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductUpdate'
+      responses:
+        '200': { description: OK }
+    delete:
+      summary: Admin delete product
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '204': { description: No Content }
+  /admin/contacts:
+    get:
+      summary: Admin list contact requests
+      security:
+        - bearerAuth: []
+      responses:
+        '200': { description: OK }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Product:
+      type: object
+      properties:
+        id: { type: integer }
+        modelName: { type: string }
+        description: { type: string }
+        price: { type: number }
+        rating: { type: number }
+    ProductDetail:
+      allOf:
+        - $ref: '#/components/schemas/Product'
+        - type: object
+          properties:
+            images:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProductImage'
+            reviews:
+              type: array
+              items:
+                $ref: '#/components/schemas/Review'
+    ProductImage:
+      type: object
+      properties:
+        id: { type: integer }
+        url: { type: string, format: uri }
+        altText: { type: string }
+        order: { type: integer }
+    Review:
+      type: object
+      properties:
+        id: { type: integer }
+        productId: { type: integer }
+        rating: { type: integer, minimum: 1, maximum: 5 }
+        title: { type: string }
+        body: { type: string }
+        author: { type: string }
+        date: { type: string, format: date-time }
+    ProductCreate:
+      type: object
+      required: [modelName, price]
+      properties:
+        modelName: { type: string }
+        description: { type: string }
+        price: { type: number }
+        rating: { type: number }
+        images:
+          type: array
+          items: { $ref: '#/components/schemas/ProductImage' }
+    ProductUpdate:
+      type: object
+      properties:
+        modelName: { type: string }
+        description: { type: string }
+        price: { type: number }
+        rating: { type: number }
+        images:
+          type: array
+          items: { $ref: '#/components/schemas/ProductImage' }
