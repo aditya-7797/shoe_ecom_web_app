@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { api } from '../services/api.js';
 
 export default function AdminSignup() {
-  const [form, setForm] = useState({ name: '', email: '', password: '', adminKey: '' });
+  const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -12,14 +12,6 @@ export default function AdminSignup() {
     e.preventDefault();
     setLoading(true);
     setError('');
-    
-    // Simple admin key validation (in production, this should be more secure)
-    const expectedKey = 'admin-secret-key';
-    if (form.adminKey.trim() !== expectedKey) {
-      setError(`Invalid admin registration key. Expected: ${expectedKey}`);
-      setLoading(false);
-      return;
-    }
     
     try {
       // Create user with admin role
@@ -86,18 +78,6 @@ export default function AdminSignup() {
                 className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 placeholder="Create password"
                 minLength="6"
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Admin Registration Key</label>
-              <input
-                type="password"
-                value={form.adminKey}
-                onChange={(e) => setForm({ ...form, adminKey: e.target.value })}
-                className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                placeholder="Enter admin key"
                 required
               />
             </div>
